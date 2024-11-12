@@ -1,14 +1,51 @@
-# apprunner.yml
+## apprunner.yml
+#version: 1.0
+#
+## Runtime configuration for the Python application
+#runtime: python3
+#
+## Command to install dependencies and run the Streamlit application
+#build:
+#  commands:
+#    # Install dependencies listed in a requirements.txt file
+#    - pip install -r requirements.txt
+#
+#run:
+#  command: streamlit run app.py --server.port 8080 --server.address 0.0.0.0
+
 version: 1.0
 
-# Runtime configuration for the Python application
-runtime: python3
+runtime: python3 
 
-# Command to install dependencies and run the Streamlit application
 build:
   commands:
-    # Install dependencies listed in a requirements.txt file
-    - pip install -r requirements.txt
+    pre-build:
+      # Update pip to the latest version
+      - python -m pip install --upgrade pip
+    build:
+      # Install dependencies from requirements.txt
+      - pip install -r requirements.txt
+    post-build:
+      # Run any tests (optional, comment out if not needed)
+      - python -m unittest discover
+
+  # Define environment variables for the build process (if needed)
+  env:
+    - name: STREAMLIT_ENV
+      value: "production"
 
 run:
+  runtime-version: 3.9  # Adjust to your specific Python version if needed
   command: streamlit run app.py --server.port 8080 --server.address 0.0.0.0
+  
+  network: 
+    port: 8080
+    env: STREAMLIT_PORT
+  
+  env:
+    - name: STREAMLIT_ENV
+      value: "production"
+  secrets:
+    # (Optional) Add any secrets if your application requires them
+    # - name: my-secret
+    #   value-from: "arn:aws:secretsmanager:region:account-id:secret:your-secret-name"
