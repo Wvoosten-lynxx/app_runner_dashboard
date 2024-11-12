@@ -15,7 +15,7 @@
 
 version: 1.0
 
-runtime: python3 
+runtime: python311 
 
 build:
   commands:
@@ -35,7 +35,7 @@ build:
       value: "production"
 
 run:
-  runtime-version: 3  # Adjust to your specific Python version if needed
+  runtime-version: 3.11  # Adjust to your specific Python version if needed
   command: streamlit run app.py --server.port 8080 --server.address 0.0.0.0
   
   network: 
