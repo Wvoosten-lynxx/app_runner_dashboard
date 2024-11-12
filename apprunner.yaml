@@ -1,18 +1,3 @@
-## apprunner.yml
-#version: 1.0
-#
-## Runtime configuration for the Python application
-#runtime: python3
-#
-## Command to install dependencies and run the Streamlit application
-#build:
-#  commands:
-#    # Install dependencies listed in a requirements.txt file
-#    - pip install -r requirements.txt
-#
-#run:
-#  command: streamlit run app.py --server.port 8080 --server.address 0.0.0.0
-
 version: 1.0
 
 runtime: python3 
@@ -25,8 +10,9 @@ build:
     build:
       # Install dependencies from requirements.txt
       - pip install -r requirements.txt
+    # Uncomment the post-build section if you have tests to run
     #post-build:
-      # Run any tests (optional, comment out if not needed)
+      # Run any tests (optional)
       #- python -m unittest discover
 
   # Define environment variables for the build process (if needed)
@@ -35,17 +21,35 @@ build:
       value: "production"
 
 run:
-#  runtime-version: 3.11  # Adjust to your specific Python version if needed
+  # Start Streamlit on port 8080
   command: streamlit run app.py --server.port 8080 --server.address 0.0.0.0
   
+  # Network settings
   network: 
     port: 8080
     env: STREAMLIT_PORT
   
+  # Environment variables to enhance WebSocket and Streamlit compatibility
   env:
     - name: STREAMLIT_ENV
       value: "production"
+    - name: STREAMLIT_SERVER_ENABLE_CORS
+      value: "false"  # Disable CORS for compatibility
+    - name: STREAMLIT_SERVER_ENABLE_WEBSOCKET_COMPRESSION
+      value: "false"  # Disable WebSocket compression
+    - name: STREAMLIT_SERVER_FILE_WATCHER_TYPE
+      value: "none"   # Disable file watcher to reduce load
+    - name: STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION
+      value: "false"  # Disable XSRF protection for proxy compatibility
+    - name: STREAMLIT_SERVER_BASE_URL_PATH
+      value: "/"      # Explicitly set base URL path (adjust as needed)
+    - name: STREAMLIT_SERVER_PORT
+      value: "8080"   # Match the exposed port for consistency
+    - name: STREAMLIT_SERVER_ADDRESS
+      value: "0.0.0.0"  # Set server to listen on all interfaces
+
+  # Optional secrets section if using AWS Secrets Manager
   secrets:
-    # (Optional) Add any secrets if your application requires them
+    # Uncomment and define if secrets are required
     # - name: my-secret
     #   value-from: "arn:aws:secretsmanager:region:account-id:secret:your-secret-name"
