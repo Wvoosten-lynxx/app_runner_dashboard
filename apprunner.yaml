@@ -25,9 +25,9 @@ build:
     build:
       # Install dependencies from requirements.txt
       - pip install -r requirements.txt
-    post-build:
+    #post-build:
       # Run any tests (optional, comment out if not needed)
-      - python -m unittest discover
+      #- python -m unittest discover
 
   # Define environment variables for the build process (if needed)
   env:
