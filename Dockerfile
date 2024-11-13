@@ -1,28 +1,29 @@
-# Use an official Python image as a parent image
+#FROM python:3.11
+#COPY . /app
+#WORKDIR /app
+#RUN pip install -r requirements.txt
+#EXPOSE 8501
+#CMD streamlit run app.py
+
+# Use a specific lightweight Python version
 FROM python:3.11-slim
 
-# Set the working directory in the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install pip manually to avoid issues with missing pip commands
-RUN apt-get update && apt-get install -y \
-    curl \
-    && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
-    && python get-pip.py && rm get-pip.py \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy the requirements file into the container at /app
+# Copy requirements and install dependencies
 COPY requirements.txt .
-
-# Install any dependencies from requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code to the container
+# Copy the entire app code into the container
 COPY . .
 
-# Expose the port that Streamlit runs on
-EXPOSE 8501
+# Expose the port that Streamlit will use
+EXPOSE 8080
 
-# Command to run the application
+# Set environment variables for Streamlit
+ENV STREAMLIT_SERVER_PORT=8080
+ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
+
+# Start the Streamlit app
 CMD ["streamlit", "run", "app.py"]
